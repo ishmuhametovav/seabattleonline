@@ -1,0 +1,17 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: seabattleonline
+  datasource:
+    url: jdbc:h2:mem:seabattle
+    username: h2
+    password:
+  #jpa:
+    #hibernate:
+      #ddl-auto: create-drop
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    access: 1
+    refresh: 30
