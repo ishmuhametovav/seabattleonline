@@ -1,6 +1,6 @@
 package com.example.seabattleonline.domain.game;
 
-import domain.game.board.CellView;
+import com.example.seabattleonline.domain.game.board.CellView;
 
 import java.util.List;
 

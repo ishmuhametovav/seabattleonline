@@ -1,13 +1,13 @@
 package com.example.seabattleonline.domain.game.board;
 
-import domain.game.exception.BadShipPlacementException;
-import domain.game.exception.ShipLengthNotAvailableException;
-import domain.game.exception.ShotOutOfBoundsException;
-import domain.game.exception.TooManyShipsException;
-import domain.game.ship.FleetSpec;
-import domain.game.ship.Ship;
-import domain.game.ship.ShotResult;
-import domain.game.vector.Vector;
+import com.example.seabattleonline.domain.game.exception.BadShipPlacementException;
+import com.example.seabattleonline.domain.game.exception.ShipLengthNotAvailableException;
+import com.example.seabattleonline.domain.game.exception.ShotOutOfBoundsException;
+import com.example.seabattleonline.domain.game.exception.TooManyShipsException;
+import com.example.seabattleonline.domain.game.ship.FleetSpec;
+import com.example.seabattleonline.domain.game.ship.Ship;
+import com.example.seabattleonline.domain.game.ship.ShotResult;
+import com.example.seabattleonline.domain.game.vector.Vector;
 
 import java.util.*;
 
@@ -18,8 +18,10 @@ public class Board {
     private final FleetSpec fleetSpec;
     private Map<Integer, Integer> remaining;
 
-    public Board(int size, FleetSpec fleetSpec) {
-        if (size <= 0) throw new IllegalArgumentException("Board size must be positive");
+    public Board(final int size, final FleetSpec fleetSpec) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("Board size must be positive");
+        }
         this.fleetSpec = fleetSpec;
         remaining = new HashMap<>(fleetSpec.countByLength());
         grid = new CellState[size][size];
@@ -32,7 +34,11 @@ public class Board {
         }
     }
 
-    public void placeShip(Vector start, int length, boolean horizontal) {
+    public void placeShip(
+            final Vector start,
+            final int length,
+            final boolean horizontal
+    ) {
         if (!remaining.containsKey(length)) {
             throw new ShipLengthNotAvailableException();
         }
@@ -52,7 +58,7 @@ public class Board {
         }
     }
 
-    public ShotResult shot(Vector coords) {
+    public ShotResult shot(final Vector coords) {
         if (!inBounds(coords.x(), coords.y())) {
             throw new ShotOutOfBoundsException();
         }
@@ -68,7 +74,10 @@ public class Board {
                 markShipAsDestroyed(ship);
             }
             result = ShotResult.SHOT;
-        } else if (value == CellState.MISS || value == CellState.HIT || value == CellState.SUNK) {
+        } else if (value == CellState.MISS
+                || value == CellState.HIT
+                || value == CellState.SUNK
+        ) {
             result = ShotResult.ALREADY_SHOT;
         } else {
             grid[coords.y()][coords.x()] = CellState.MISS;
@@ -118,37 +127,47 @@ public class Board {
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[0].length; x++) {
                 CellState state = grid[y][x];
-                CellState visible = (state == CellState.SHIP) ? CellState.EMPTY : state;
+                CellState visible = (state == CellState.SHIP)
+                        ? CellState.EMPTY : state;
                 result.add(new CellView(x, y, visible, -1));
             }
         }
         return result;
     }
 
-    private void markShipAsDestroyed(Ship ship) {
+    private void markShipAsDestroyed(final Ship ship) {
         List<Vector> cells = ship.getCells();
         for (var cell : cells) {
             grid[cell.y()][cell.x()] = CellState.SUNK;
         }
     }
 
-    private boolean canPlaceShip(List<Vector> coords) {
+    private boolean canPlaceShip(final List<Vector> coords) {
         for (Vector v : coords) {
-            if (!correctCellPosition(v)) return false;
+            if (!correctCellPosition(v)) {
+                return false;
+            }
         }
         return true;
     }
 
-    private List<Vector> buildCoords(Vector start, int length, boolean horizontal) {
+    private List<Vector> buildCoords(
+            final Vector start,
+            final int length,
+            final boolean horizontal
+    ) {
         List<Vector> coords = new ArrayList<>(length);
         Vector dir = horizontal ? new Vector(1, 0) : new Vector(0, 1);
         for (int i = 0; i < length; i++) {
-            coords.add(new Vector(start.x() + dir.x() * i, start.y() + dir.y() * i));
+            coords.add(new Vector(
+                    start.x() + dir.x() * i,
+                    start.y() + dir.y() * i)
+            );
         }
         return coords;
     }
 
-    private boolean correctCellPosition(Vector coords) {
+    private boolean correctCellPosition(final Vector coords) {
         int x = coords.x();
         int y = coords.y();
 
@@ -174,7 +193,7 @@ public class Board {
         return true;
     }
 
-    private boolean inBounds(int x, int y) {
+    private boolean inBounds(final int x, final int y) {
         return x >= 0 && x < grid[0].length && y >= 0 && y < grid.length;
     }
 }
