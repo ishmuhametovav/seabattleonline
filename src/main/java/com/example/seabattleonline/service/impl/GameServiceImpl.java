@@ -115,7 +115,7 @@ public class GameServiceImpl implements GameService {
 
         simpMessagingTemplate.convertAndSendToUser(
                 player,
-                "/room" + room.getId() + "/game-info",
+                "/room/" + room.getId() + "/game-info",
                 playerGameInfo
         );
     }
