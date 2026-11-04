@@ -48,8 +48,7 @@ public class AuthController {
             description = "user registration"
     )
     public UserDto register(
-            @Validated(OnCreate.class) @RequestBody @Parameter
-            final UserDto userDto
+            @Validated(OnCreate.class) @RequestBody @Parameter final UserDto userDto
     ) {
         User user = userMapper.toEntity(userDto);
         User createdUser = userService.create(user);

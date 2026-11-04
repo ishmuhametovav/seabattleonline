@@ -133,6 +133,10 @@ public class Game {
         );
     }
 
+    public GameStatus getStatus() {
+        return status;
+    }
+
     private ShotResult processTurn(
             final PlayerSlot player1,
             final PlayerSlot player2,

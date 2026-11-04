@@ -51,8 +51,7 @@ public class UserController {
     @ApiResponses(value = {})
     @PreAuthorize("@customSecurityExpression.canAccessUser(#userDto.id)")
     public UserDto update(
-            @Validated(OnUpdate.class) @RequestBody @Parameter
-            final UserDto userDto
+            @Validated(OnUpdate.class) @RequestBody @Parameter final UserDto userDto
     ) {
         User user = userMapper.toEntity(userDto);
         User updatedUser = userService.update(user);

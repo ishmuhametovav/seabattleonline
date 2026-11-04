@@ -50,11 +50,11 @@ public class ApplicationConfig {
                 .exceptionHandling(exception ->
                         exception.authenticationEntryPoint(
                                 (request, response, authException) -> {
-                            response.setStatus(
-                                    HttpStatus.UNAUTHORIZED.value()
-                            );
-                            response.getWriter().write("Unauthorized");
-                        }).accessDeniedHandler((
+                                    response.setStatus(
+                                            HttpStatus.UNAUTHORIZED.value()
+                                    );
+                                    response.getWriter().write("Unauthorized");
+                                }).accessDeniedHandler((
                                 request,
                                 response,
                                 accessDeniedException
@@ -69,6 +69,7 @@ public class ApplicationConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/index.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .anonymous(AbstractHttpConfigurer::disable)

@@ -1,6 +1,7 @@
 package com.example.seabattleonline.web.security.expression;
 
 import com.example.seabattleonline.domain.user.Role;
+import com.example.seabattleonline.repository.RoomRepository;
 import com.example.seabattleonline.service.UserService;
 import com.example.seabattleonline.web.security.JwtEntity;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 @Service("customSecurityExpression")
 @RequiredArgsConstructor
 public class CustomSecurityExpression {
+
     private final UserService userService;
+    private final RoomRepository roomRepository;
 
     public boolean canAccessUser(final Long id) {
         JwtEntity authorizedUser = (JwtEntity) SecurityContextHolder
@@ -23,5 +26,11 @@ public class CustomSecurityExpression {
 
         return authorizedUser.getId().equals(id)
                 || authorizedUser.getAuthorities().contains(authority);
+    }
+
+    public boolean canAccessRoom(final Long roomId, final String username) {
+        return roomRepository.findById(roomId)
+                .map(room -> room.getPlayers().contains(username))
+                .orElse(false);
     }
 }
