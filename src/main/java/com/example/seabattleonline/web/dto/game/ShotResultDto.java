@@ -10,7 +10,6 @@ public record ShotResultDto(
         VectorDto coords,
         @NotNull(message = "shot result should be not null")
         ShotResult result,
-        @NotNull(message = "winner should not be null")
         Optional<String> winner
 ) {
 }

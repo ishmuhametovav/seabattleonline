@@ -83,13 +83,13 @@ public class GameServiceImpl implements GameService {
 
         simpMessagingTemplate.convertAndSendToUser(
                 players[0].toString(),
-                "/room/" + room.getId() + "shot-result",
+                "/room/" + room.getId() + "/shot-result",
                 result
         );
 
         simpMessagingTemplate.convertAndSendToUser(
                 players[1].toString(),
-                "/room/" + room.getId() + "shot-result",
+                "/room/" + room.getId() + "/shot-result",
                 result
         );
 
@@ -115,7 +115,7 @@ public class GameServiceImpl implements GameService {
 
         simpMessagingTemplate.convertAndSendToUser(
                 player,
-                "/room" + room.getId() + "game-info",
+                "/room" + room.getId() + "/game-info",
                 playerGameInfo
         );
     }

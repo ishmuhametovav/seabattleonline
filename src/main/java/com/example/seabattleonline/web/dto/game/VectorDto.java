@@ -10,12 +10,12 @@ import jakarta.validation.constraints.NotNull;
 public record VectorDto(
         @NotNull(message = "x coordinate should not be null")
         @Min(value = 0, message = "x coordinate should be within borders")
-        @Max(value = 10, message = "x coordinate should be within borders")
+        @Max(value = 9, message = "x coordinate should be within borders")
         Integer x,
 
         @NotNull(message = "y coordinate should not be null")
         @Min(value = 0, message = "y coordinate should be within borders")
-        @Max(value = 10, message = "y coordinate should be within borders")
+        @Max(value = 9, message = "y coordinate should be within borders")
         Integer y
 ) {
 }

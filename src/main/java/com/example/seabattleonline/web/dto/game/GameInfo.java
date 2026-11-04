@@ -14,7 +14,6 @@ public record GameInfo(
         GridInfo gridInfo,
         @NotBlank(message = "players set should not be null")
         Set<String> players,
-        @NotNull(message = "winner should not be null")
         Optional<String> winner,
         @NotNull(message = "game status should not be null")
         GameStatus gameStatus,
