@@ -22,7 +22,7 @@ public class GameController {
 
     private final GameService gameService;
 
-    @MessageMapping("/room/{id}/mark-ready")
+    @MessageMapping("/room/{roomId}/mark-ready")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void markReady(
             @DestinationVariable final Long roomId,
@@ -31,7 +31,7 @@ public class GameController {
         gameService.markReady(roomId, principal.getName());
     }
 
-    @MessageMapping("/room/{id}/unmark-ready")
+    @MessageMapping("/room/{roomId}/unmark-ready")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void unmarkReady(
             @DestinationVariable final Long roomId,
@@ -40,7 +40,7 @@ public class GameController {
         gameService.unmarkReady(roomId, principal.getName());
     }
 
-    @MessageMapping("/room/{id}/place-ship")
+    @MessageMapping("/room/{roomId}/place-ship")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void placeShip(
             @DestinationVariable final Long roomId,
@@ -50,7 +50,7 @@ public class GameController {
         gameService.placeShip(roomId, principal.getName(), command);
     }
 
-    @MessageMapping("/room/{id}/clear-board")
+    @MessageMapping("/room/{roomId}/clear-board")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void clearBoard(
             @DestinationVariable final Long roomId,
@@ -59,7 +59,7 @@ public class GameController {
         gameService.clearBoard(roomId, principal.getName());
     }
 
-    @MessageMapping("/room/{id}/make-turn")
+    @MessageMapping("/room/{roomId}/make-turn")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void makeTurn(
             @DestinationVariable final Long roomId,
@@ -69,7 +69,7 @@ public class GameController {
         gameService.makeTurn(roomId, principal.getName(), command);
     }
 
-    @MessageMapping("/room/{id}/get-game-info")
+    @MessageMapping("/room/{roomId}/get-game-info")
     @PreAuthorize(CAN_ACCESS_ROOM)
     public void getGameInfo(
             @DestinationVariable final Long roomId,

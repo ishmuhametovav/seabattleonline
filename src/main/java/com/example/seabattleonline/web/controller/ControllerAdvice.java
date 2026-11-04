@@ -5,6 +5,8 @@ import com.example.seabattleonline.domain.exception.ConnectionLostException;
 import com.example.seabattleonline.domain.exception.ExceptionBody;
 import com.example.seabattleonline.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,6 +35,14 @@ public class ControllerAdvice {
     ExceptionBody handleResourceNotFoundException(
             final ResourceNotFoundException e
     ) {
+        e.printStackTrace();
+        return new ExceptionBody(e.getMessage(), null);
+    }
+
+    //TODO add more exceptions handling
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public ExceptionBody onWsError(final Exception e) {
         e.printStackTrace();
         return new ExceptionBody(e.getMessage(), null);
     }

@@ -1,121 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Matchmaking Test</title>
-    <style>
-        body { font-family: monospace; padding: 20px; background: #f4f4f4; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { font-size: 20px; }
-        .status { padding: 5px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; font-weight: bold; }
-        .status.disconnected { background: #f8d7da; color: #721c24; }
-        .status.connected { background: #d4edda; color: #155724; }
-        button { padding: 10px 15px; margin-right: 10px; cursor: pointer; border: none; border-radius: 4px; font-size: 14px; color: white; }
-        .btn-primary { background: #007bff; }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
-        #log { background: #222; color: #0f0; padding: 15px; height: 400px; overflow-y: auto; border-radius: 4px; margin-top: 20px; font-size: 13px; line-height: 1.5; }
-        .log-time { color: #888; }
-        .log-error { color: #ff4444; }
-        .log-event { color: #ffcc00; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071522">
+  <meta name="description" content="Морской бой онлайн — расставляй корабли и соревнуйся с соперником в реальном времени.">
+  <title>Sea Battle — Морской бой онлайн</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<div class="container">
-    <h1>🎮 Matchmaking Test Client</h1>
-
-    <div>
-        Статус: <span id="status" class="status disconnected">Отключено</span>
+<div class="app-shell">
+  <header class="site-header">
+    <div class="brand" aria-label="Sea Battle Online">
+      <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M8 31l8-14h16l8 14-16 9z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M24 10v18M16 17l8-8 8 8M10 35c4 3 8 3 12 0s8-3 12 0 8 3 12 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><div class="brand-name">SEA<span>BATTLE</span></div><div class="brand-sub">МОРСКОЙ БОЙ · ONLINE</div></div>
     </div>
-
-    <div style="margin-bottom: 15px;">
-        <label>JWT Token: </label>
-        <input type="text" id="jwtInput" style="width: 400px; padding: 5px;" placeholder="Вставь сюда свой JWT токен">
-        <button class="btn-primary" onclick="connect()">Подключиться</button>
+    <div class="header-actions">
+      <span id="connection-badge" class="connection"><i class="connection-dot"></i><span id="connection-text">Не подключено</span></span>
+      <button id="btn-logs" type="button" class="icon-button" title="История событий" aria-label="История событий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
     </div>
+  </header>
 
-    <div>
-        <button class="btn-primary" id="btnFind" onclick="findMatch()" disabled>🔍 Найти игру (Find Match)</button>
-        <button class="btn-danger" id="btnDisconnect" onclick="disconnectFromQueue()" disabled>❌ Отменить поиск</button>
-    </div>
+  <main>
+    <section id="view-auth" class="view auth-view">
+      <div class="auth-intro">
+        <div class="eyebrow"><span class="eyebrow-line"></span> ТВОЯ МОРСКАЯ ОПЕРАЦИЯ НАЧИНАЕТСЯ ЗДЕСЬ</div>
+        <h1>Море зовёт.<br><em>Пора в бой.</em></h1>
+        <p>Расставь флот, найди противника и докажи, кто управляет этими водами.</p>
+        <div class="auth-highlights"><div><b>10 × 10</b><span>игровое поле</span></div><div><b>2 игрока</b><span>один победитель</span></div><div><b>В реальном времени</b><span>через WebSocket</span></div></div>
+        <div class="sonar-visual" aria-hidden="true"><div class="sonar-ring sonar-r1"></div><div class="sonar-ring sonar-r2"></div><div class="sonar-ring sonar-r3"></div><div class="sonar-sweep"></div><div class="sonar-cross">+</div><div class="sonar-ship">◆</div><div class="sonar-ping sonar-p1"></div><div class="sonar-ping sonar-p2"></div></div>
+      </div>
+      <div class="auth-card card">
+        <span class="card-kicker">ДОБРО ПОЖАЛОВАТЬ</span><h2>На борт!</h2>
+        <p class="muted">Войди в аккаунт или создай новый, чтобы начать.</p>
+        <div class="auth-tabs" role="tablist" aria-label="Авторизация"><button id="tab-login" type="button" role="tab" aria-selected="true" class="active" data-auth-tab="login">Вход</button><button id="tab-register" type="button" role="tab" aria-selected="false" data-auth-tab="register">Регистрация</button></div>
+        <form id="form-login" class="auth-form" autocomplete="on">
+          <label for="login-name">Имя игрока</label><input id="login-name" name="username" type="text" minlength="1" maxlength="255" autocomplete="username" placeholder="Например, admiral" required>
+          <label for="login-password">Пароль</label><input id="login-password" name="password" type="password" maxlength="255" autocomplete="current-password" placeholder="Введите пароль" required>
+          <button id="btn-login" class="button button-primary" type="submit">Войти в игру <span aria-hidden="true">→</span></button>
+        </form>
+        <form id="form-register" class="auth-form hidden" autocomplete="on">
+          <label for="register-name">Имя игрока</label><input id="register-name" name="name" maxlength="255" autocomplete="username" placeholder="Придумай позывной" required>
+          <label for="register-email">Email <span class="muted">(необязательно)</span></label><input id="register-email" name="email" type="email" maxlength="255" autocomplete="email" placeholder="example@mail.ru">
+          <label for="register-password">Пароль</label><input id="register-password" name="password" type="password" maxlength="255" autocomplete="new-password" placeholder="Придумай пароль" required>
+          <label for="register-confirm">Повтори пароль</label><input id="register-confirm" name="passwordConfirmation" type="password" maxlength="255" autocomplete="new-password" placeholder="Повтори пароль" required>
+          <button id="btn-register" class="button button-primary" type="submit">Создать аккаунт <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="auth-error" class="form-error" role="alert" aria-live="polite"></p>
+      </div>
+    </section>
 
-    <div id="log"></div>
+    <section id="view-lobby" class="view lobby-view hidden">
+      <div class="page-intro"><div><div class="eyebrow"><span class="eyebrow-line"></span> ГЛАВНЫЙ ШТАБ</div><h1>Готов к <em>сражению?</em></h1><p>Выбери режим, и мы найдём тебе противника.</p></div><div class="user-card"><div class="avatar" id="lobby-avatar">A</div><div><b id="lobby-name">Игрок</b><span>Капитан флота</span></div><button id="btn-logout" type="button" class="text-button">Выйти</button></div></div>
+      <div class="lobby-layout">
+        <div class="match-card card"><div class="match-card-top"><span class="card-kicker">БЫСТРАЯ ИГРА</span><span class="tag">PVP · 1 на 1</span></div><div class="match-icon">⚓</div><h2>Случайный соперник</h2><p>Классический морской бой, 10 кораблей в каждом флоте. Сражение до последнего корабля.</p><div class="match-meta"><span>▦ Поле 10×10</span><span>♟ 2 игрока</span></div><button id="btn-find" type="button" class="button button-primary large">Найти соперника <span>→</span></button><button id="btn-cancel" type="button" class="button button-outline hidden">Отменить поиск</button><div id="lobby-search" class="search-status hidden" role="status"><span class="spinner"></span><div><b id="search-title">Поиск соперника</b><small id="search-subtitle">Ожидаем второго игрока…</small></div></div><p id="lobby-status" class="muted small" aria-live="polite"></p></div>
+        <div class="info-card card"><span class="card-kicker">ПАМЯТКА КАПИТАНУ</span><h3>Правила боя</h3><div class="rules-item"><span>01</span><p>Размести 10 кораблей. Они не должны соприкасаться даже углами.</p></div><div class="rules-item"><span>02</span><p>Когда оба игрока готовы, начинается битва.</p></div><div class="rules-item"><span>03</span><p>Попал — стреляй ещё. Промахнулся — ход переходит сопернику.</p></div><div class="rules-item"><span>04</span><p>Первым уничтожь весь флот противника.</p></div></div>
+      </div>
+    </section>
+
+    <section id="view-game" class="view game-view hidden">
+      <div class="game-top"><div><div class="eyebrow"><span class="eyebrow-line"></span> ОПЕРАЦИЯ «МОРСКОЙ БОЙ»</div><h1>Боевая <em>комната <span id="room-id">—</span></em></h1><p id="players-line" class="muted">Подключение игроков…</p></div><div class="game-top-right"><div id="game-phase" class="phase-chip">Подготовка</div><button id="btn-return-lobby" type="button" class="button button-ghost small-button" title="Выйти из отображения матча">К лобби</button></div></div>
+      <div class="mission-banner" id="mission-banner" role="status"><div class="mission-icon" id="mission-icon">⚓</div><div><b id="mission-title">Подготовка к бою</b><span id="mission-subtitle">Расставь свой флот на поле слева.</span></div><div class="mission-indicator" id="mission-indicator">ПОДГОТОВКА</div></div>
+      <div class="game-layout">
+        <div class="battle-area">
+          <div class="board-card card"><div class="board-heading"><div><span class="card-kicker">СЕКТОР А</span><h2>Твой флот</h2></div><span id="my-fleet-count" class="board-counter">0 / 10 кораблей</span></div><div id="board-my" class="board-grid" role="grid" aria-label="Твоё поле"></div><div class="board-foot"><span><i class="legend-dot ship-dot"></i>Корабль</span><span><i class="legend-dot hit-dot"></i>Попадание</span><span><i class="legend-dot miss-dot"></i>Промах</span></div></div>
+          <div class="board-card card"><div class="board-heading"><div><span class="card-kicker">СЕКТОР Б</span><h2>Поле противника</h2></div><span id="enemy-shots" class="board-counter">0 выстрелов</span></div><div id="board-enemy" class="board-grid" role="grid" aria-label="Поле противника"></div><div class="board-foot"><span><i class="legend-dot enemy-dot"></i>Неизвестно</span><span><i class="legend-dot hit-dot"></i>Попадание</span><span><i class="legend-dot miss-dot"></i>Промах</span></div></div>
+        </div>
+        <aside class="side-panel">
+          <div id="placement-panel" class="card controls-card"><span class="card-kicker">УПРАВЛЕНИЕ ФЛОТОМ</span><h3>Расстановка</h3><p class="muted small">Выбери корабль, наведи курсор на клетку и нажми для размещения.</p><div class="fleet-picker" id="fleet-picker" aria-label="Выбор длины корабля"></div><div class="orientation-row"><span>Направление</span><button id="btn-rotate" type="button" class="button button-outline">↻ <span id="orientation-label">Горизонтально</span></button></div><p class="keyboard-hint">Нажми <kbd>R</kbd> для поворота</p><div class="control-separator"></div><button id="btn-ready" type="button" class="button button-primary" disabled>Готов к бою →</button><button id="btn-unready" type="button" class="button button-outline hidden">Отменить готовность</button><button id="btn-clear" type="button" class="button button-ghost">Очистить поле</button><div class="placement-note" id="placement-note">Нужно разместить все 10 кораблей.</div></div>
+          <div class="card combat-card"><span class="card-kicker">БОЕВОЙ ЖУРНАЛ</span><h3>Ход операции</h3><div id="battle-feed" class="battle-feed" aria-live="polite"><div class="empty-feed">События боя появятся здесь.</div></div></div>
+          <div class="card tip-card"><span class="card-kicker">ПОДСКАЗКА</span><p id="tip-text">Корабли не могут касаться друг друга, даже по диагонали.</p></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><span>SEABATTLE ONLINE <span class="footer-dot">·</span> 2026</span><span>Побеждает тот, кто держит курс.</span></footer>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-
-<script>
-    let stompClient = null;
-
-    // Утилита для логирования
-    function log(message, type = 'info') {
-        const logDiv = document.getElementById('log');
-        const time = new Date().toLocaleTimeString();
-        const colorClass = type === 'error' ? 'log-error' : (type === 'event' ? 'log-event' : '');
-        logDiv.innerHTML += `<div class="${colorClass}"><span class="log-time">[${time}]</span> ${message}</div>`;
-        logDiv.scrollTop = logDiv.scrollHeight;
-    }
-
-    function updateStatus(connected) {
-        const statusEl = document.getElementById('status');
-        statusEl.textContent = connected ? 'Подключено' : 'Отключено';
-        statusEl.className = connected ? 'status connected' : 'status disconnected';
-
-        document.getElementById('btnFind').disabled = !connected;
-        document.getElementById('btnDisconnect').disabled = !connected;
-    }
-
-    function connect() {
-        const jwt = document.getElementById('jwtInput').value.trim();
-        if (!jwt) {
-            alert('Пожалуйста, вставь JWT токен!');
-            return;
-        }
-
-        log('Подключение к /ws...');
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        // Отключаем лишний шум в консоли (оставляем только наши логи)
-        stompClient.debug = null;
-
-        // ВАЖНО: Передаем токен в заголовках STOMP CONNECT
-        stompClient.connect(
-            { Authorization: 'Bearer ' + jwt },
-            (frame) => {
-                log('✅ Успешно подключено!', 'event');
-                updateStatus(true);
-
-                // Подписка на события матчмейкинга
-                stompClient.subscribe('/user/queue/matchmaking/event', (msg) => {
-                    log(`📩 [matchmaking/event] Получено: ${msg.body}`, 'event');
-                });
-
-                // Подписка на комнату (ID)
-                stompClient.subscribe('/user/queue/roomid', (msg) => {
-                    log(`📩 [roomid] Получено: ${msg.body}`, 'event');
-                });
-            },
-            (error) => {
-                log('❌ Ошибка подключения: ' + JSON.stringify(error), 'error');
-                updateStatus(false);
-            }
-        );
-    }
-
-    function findMatch() {
-        if (!stompClient || !stompClient.connected) return;
-        log('Отправка: /app/matchmaking/find-match');
-        stompClient.send('/app/matchmaking/find-match', {}, '');
-    }
-
-    function disconnectFromQueue() {
-        if (!stompClient || !stompClient.connected) return;
-        log('Отправка: /app/matchmaking/disconnect');
-        stompClient.send('/app/matchmaking/disconnect', {}, '');
-    }
-</script>
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+<div id="log-overlay" class="log-overlay hidden"><div class="log-panel" role="dialog" aria-modal="true" aria-labelledby="logs-heading"><div class="log-heading"><div><span class="card-kicker">ДИАГНОСТИКА</span><h2 id="logs-heading">Журнал соединения</h2></div><button id="btn-close-logs" type="button" class="icon-button" aria-label="Закрыть журнал">✕</button></div><p class="muted small">Технические события STOMP. Токены здесь не показываются.</p><pre id="log-list" class="log-list"></pre><div class="log-footer"><button id="btn-clear-logs" type="button" class="button button-outline">Очистить</button><button id="btn-copy-logs" type="button" class="button button-primary">Скопировать журнал</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>

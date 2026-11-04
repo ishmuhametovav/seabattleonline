@@ -69,7 +69,8 @@ public class ApplicationConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/index.html").permitAll()
+                        .requestMatchers("/index.html", "/style.css",
+                                "/app.js").permitAll()
                         .anyRequest().authenticated()
                 )
                 .anonymous(AbstractHttpConfigurer::disable)
