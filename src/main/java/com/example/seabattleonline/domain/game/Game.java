@@ -122,6 +122,10 @@ public class Game {
         return Optional.ofNullable(winner);
     }
 
+    public PlayerSlot getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public GridInfo getGridInfo(final PlayerSlot player) {
         Board playerBoard = player == PlayerSlot.PLAYER1
                 ? board1 : board2;

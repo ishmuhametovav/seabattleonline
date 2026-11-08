@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
 
@@ -67,6 +68,15 @@ public class GameController {
             final Principal principal
     ) {
         gameService.makeTurn(roomId, principal.getName(), command);
+    }
+
+    @MessageMapping("/room/{roomId}/disconnect")
+    @PreAuthorize(CAN_ACCESS_ROOM)
+    public void disconnect(
+            @PathVariable final Long roomId,
+            final Principal principal
+    ) {
+
     }
 
     @MessageMapping("/room/{roomId}/get-game-info")

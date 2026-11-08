@@ -40,11 +40,13 @@ public class GameServiceImpl implements GameService {
     @Override
     public void markReady(final Long roomId, final String player) {
         getRoomOrThrow(roomId).markReady(player);
+        getGameInfo(roomId, player);
     }
 
     @Override
     public void unmarkReady(final Long roomId, final String player) {
         getRoomOrThrow(roomId).unmarkReady(player);
+        getGameInfo(roomId, player);
     }
 
     @Override
@@ -53,13 +55,14 @@ public class GameServiceImpl implements GameService {
             final String player,
             final PlaceShipCommand command
     ) {
-        var room = getRoomOrThrow(roomId);
-        room.placeShip(player, command);
+        getRoomOrThrow(roomId).placeShip(player, command);
+        getGameInfo(roomId, player);
     }
 
     @Override
     public void clearBoard(final Long roomId, final String player) {
         getRoomOrThrow(roomId).clearBoard(player);
+        getGameInfo(roomId, player);
     }
 
     @Override
@@ -78,7 +81,6 @@ public class GameServiceImpl implements GameService {
                 shotResult,
                 winner
         );
-        //TODO maybe move to separate function
         var players = room.getPlayers().toArray();
 
         simpMessagingTemplate.convertAndSendToUser(
@@ -99,6 +101,29 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public void disconnect(
+            final Long roomId,
+            final String player
+    ) {
+        var room = getRoomOrThrow(roomId);
+        var players = room.getPlayers().toArray();
+
+        simpMessagingTemplate.convertAndSendToUser(
+                players[0].toString(),
+                "/room/" + room.getId() + "/disconnect",
+                "player " + player + " disconnected"
+        );
+
+        simpMessagingTemplate.convertAndSendToUser(
+                players[1].toString(),
+                "/room/" + room.getId() + "/disconnect",
+                "player " + player + " disconnected"
+        );
+
+        roomRepository.deleteById(roomId);
+    }
+
+    @Override
     public void getGameInfo(
             final Long roomId,
             final String player
@@ -108,6 +133,7 @@ public class GameServiceImpl implements GameService {
         GameInfo playerGameInfo = new GameInfo(
                 room.getGridInfo(player),
                 room.getPlayers(),
+                room.getCurrentPlayer(),
                 room.getWinner(),
                 room.getGameStatus(),
                 room.getStatus()

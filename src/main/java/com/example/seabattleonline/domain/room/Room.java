@@ -145,6 +145,17 @@ public class Room {
         return playerSlots.keySet();
     }
 
+    public String getCurrentPlayer() {
+        PlayerSlot currentPlayer = game.getCurrentPlayer();
+        String player = "";
+        for (var pair : playerSlots.entrySet()) {
+            if (pair.getValue().equals(currentPlayer)) {
+                player = pair.getKey();
+            }
+        }
+        return player;
+    }
+
     public GridInfo getGridInfo(final String player) {
         if (!playerSlots.containsKey(player)) {
             throw new IllegalArgumentException(

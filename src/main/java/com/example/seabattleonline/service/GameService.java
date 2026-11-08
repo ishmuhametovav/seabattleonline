@@ -25,6 +25,8 @@ public interface GameService {
             ShootCommand command
     );
 
+    void disconnect(Long roomId, String player);
+
     void getGameInfo(
             Long roomId,
             String player
