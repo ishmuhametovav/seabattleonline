@@ -76,7 +76,7 @@ public class GameController {
             @PathVariable final Long roomId,
             final Principal principal
     ) {
-
+        gameService.disconnect(roomId, principal.getName());
     }
 
     @MessageMapping("/room/{roomId}/get-game-info")
